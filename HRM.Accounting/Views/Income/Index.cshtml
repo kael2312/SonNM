@@ -1,14 +1,165 @@
 ﻿@{
     ViewData["Title"] = "Total income summary";
 }
-<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css"/>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+
+<style>
+    .modal-dialog{
+            max-width: 50%;
+    }
+    
+    .staff-information {
+        border: 2px solid #EBEDF3;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    
+    .table.salary-table thead th{
+        border-bottom: 2px solid #c2a4fd;
+        border-top: 2px solid #c2a4fd;
+        text-align: center;
+    }
+    
+    .table.salary-table tbody td, .salary-and-pit-table td{
+        text-align: end;
+    }
+    
+    .table.salary-table thead th.salary-benefit{
+        vertical-align: middle;
+    }    
+    
+    .table.salary-table tfoot {
+        background-color: green;
+        color: white;
+        font-size: 17px;
+    }
+    
+    th.salary-benefit {
+        width: 250px;
+    }
+    
+</style>
 
 <div class="card card-custom">
     <table id="myTable" class="display">
     </table>
 </div>
-<input type="file" id="import-document" accept=".xlsx" />
+<input type="file" id="import-document" accept=".xlsx"/>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title fs-5" id="exampleModalLabel">Annual total income</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Staff Information -->
+                <div class="staff-information">
+                    <h1 id="staff-name"></h1>
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="row">
+                                <div class="col-3">Staff code:</div>
+                                <div class="col-5" id="staff-code"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">Department:</div>
+                                <div class="col-5" id="department"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">Position:</div>
+                                <div class="col-5" id="position"></div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-4">Year of Experience:</div>
+                                <div class="col-6" id="yoe"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">Leave taken:</div>
+                                <div class="col-6" id="leave-taken"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">KPI:</div>
+                                <div class="col-6" id="kpi"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Salary Information -->
+                <table class="table table-bordered salary-table">
+                    <thead class="table-info">
+                    <tr>
+                        <th rowspan="2" class="salary-benefit">SALARY & BENEFITS</th>
+                        <th colspan="2">VND</th>
+                        <th colspan="2">USD (Ex-rate: 23,000)</th>
+                    </tr>
+                    <tr>
+                        <th class="money">Month</th>
+                        <th class="money">Year</th>
+                        <th class="money">Month</th>
+                        <th class="money">Year</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot class="table-footer">
+                    <tr>
+                        <th scope="row">TOTAL</th>
+                        <td>34,110,368</td>
+                        <td>409,324,423</td>
+                        <td>1,483</td>
+                        <td>17,796</td>
+                    </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Salary and PIT -->
+                <table class="table table-danger table-bordered salary-and-pit-table">
+                    <tbody>
+                    <tr>
+                        <th class="salary-benefit">Salary from July 2024</th>
+                        <td class="money">23,913,000</td>
+                        <td class="money">0</td>
+                        <td class="money">0</td>
+                        <td class="money">0</td>
+                    </tr>
+                    <tr>
+                        <th class="salary-benefit">Pit of July 2024</th>
+                        <td class="money">14,306,666</td>
+                        <td class="money">0</td>
+                        <td class="money">0</td>
+                        <td class="money">0</td>
+                    </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Note -->
+                <div class="card">
+                  <div class="card-body">
+                      <div><strong>***Notes: </strong></div>
+                      <ul>
+                          <li>Allowances of Item B2 & C1 to C6 will receive after the Labor contract signing.</li>
+                          <li>Allowances C5 & C6, the employee is entitled based on the number of working months in a year</li>
+                        </ul>
+                  </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts{
     <script type="text/javascript">
@@ -96,7 +247,29 @@
         }
 
         $('#myTable').on('click', 'tr', function () {
-            console.log('clicked: ' + ctbl_table.row(this).data())
+            console.log('clicked: ', ctbl_table.row(this).data())
+            var data = ctbl_table.row(this).data();
+                $('#staff-name').text(data.fullName);
+                $('#staff-code').text(data.staffCode);
+                $('#department').text(data.department);
+                $('#position').text(data.position);
+                $('#yoe').text(data.yoe);
+                $('#leave-taken').text(data.leaveTaken);
+                $('#kpi').text(data.kpi + '/100');
+                var modalTable = $('.modal-body .table.salary-table tbody');
+                modalTable.empty(); // Clear the existing rows
+            
+                // Iterate over the data and create a new row for each item
+                $.each(data, function(key, value) {
+                    var row = $('<tr>');
+                    row.append($('<th>').text(key));
+                    row.append($('<td>').text(value));
+                    row.append($('<td>').text(0));
+                    row.append($('<td>').text(0));
+                    row.append($('<td>').text(0));
+                    modalTable.append(row);
+                });
+            $('#exampleModal').modal('show');
         })
     </script>
 }
@@ -106,8 +279,8 @@
         <span class="svg-icon svg-icon-sm mr-0">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                    <rect x="0" y="0" width="24" height="24" />
-                    <path d="M8.43296491,7.17429118 L9.40782327,7.85689436 C9.49616631,7.91875282 9.56214077,8.00751728 9.5959027,8.10994332 C9.68235021,8.37220548 9.53982427,8.65489052 9.27756211,8.74133803 L5.89079566,9.85769242 C5.84469033,9.87288977 5.79661753,9.8812917 5.74809064,9.88263369 C5.4720538,9.8902674 5.24209339,9.67268366 5.23445968,9.39664682 L5.13610134,5.83998177 C5.13313425,5.73269078 5.16477113,5.62729274 5.22633424,5.53937151 C5.384723,5.31316892 5.69649589,5.25819495 5.92269848,5.4165837 L6.72910242,5.98123382 C8.16546398,4.72182424 10.0239806,4 12,4 C16.418278,4 20,7.581722 20,12 C20,16.418278 16.418278,20 12,20 C7.581722,20 4,16.418278 4,12 L6,12 C6,15.3137085 8.6862915,18 12,18 C15.3137085,18 18,15.3137085 18,12 C18,8.6862915 15.3137085,6 12,6 C10.6885336,6 9.44767246,6.42282109 8.43296491,7.17429118 Z" fill="#000000" fill-rule="nonzero" />
+                    <rect x="0" y="0" width="24" height="24"/>
+                    <path d="M8.43296491,7.17429118 L9.40782327,7.85689436 C9.49616631,7.91875282 9.56214077,8.00751728 9.5959027,8.10994332 C9.68235021,8.37220548 9.53982427,8.65489052 9.27756211,8.74133803 L5.89079566,9.85769242 C5.84469033,9.87288977 5.79661753,9.8812917 5.74809064,9.88263369 C5.4720538,9.8902674 5.24209339,9.67268366 5.23445968,9.39664682 L5.13610134,5.83998177 C5.13313425,5.73269078 5.16477113,5.62729274 5.22633424,5.53937151 C5.384723,5.31316892 5.69649589,5.25819495 5.92269848,5.4165837 L6.72910242,5.98123382 C8.16546398,4.72182424 10.0239806,4 12,4 C16.418278,4 20,7.581722 20,12 C20,16.418278 16.418278,20 12,20 C7.581722,20 4,16.418278 4,12 L6,12 C6,15.3137085 8.6862915,18 12,18 C15.3137085,18 18,15.3137085 18,12 C18,8.6862915 15.3137085,6 12,6 C10.6885336,6 9.44767246,6.42282109 8.43296491,7.17429118 Z" fill="#000000" fill-rule="nonzero"/>
                 </g>
             </svg>
         </span>
