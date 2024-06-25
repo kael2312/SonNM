@@ -12,40 +12,40 @@ namespace HRM.Accounting.Models
         public string Department { get; set; }
         public string Position { get; set; }
         public string DOE { get; set; }
-        public string YOE { get; set; }
-        public string Depedent { get; set; }
-        public string LeaveTaken { get; set; }
-        public string KPI { get; set; }
+        public double YOE { get; set; }
+        public int Depedent { get; set; }
+        public double LeaveTaken { get; set; }
+        public double KPI { get; set; }
         public string Email { get; set; }
-        public string SalaryMonthly { get; set; }
-        public string SalaryYearly { get; set; }
-        public string BonusJun24Monthly { get; set; }
-        public string BonusJun24Yearly { get; set; }
-        public string BonusDec23Monthly { get; set; }
-        public string BonusDec23Yearly { get; set; }
-        public string PITMonthly { get; set; }
-        public string PITYearly { get; set; }
-        public string LunchMonthly { get; set; }
-        public string LunchYearly { get; set; }
-        public string MobileMonthly { get; set; }
-        public string MobileYearly { get; set; }
-        public string PetroMonthly { get; set; }
-        public string PetroYearly { get; set; }
-        public string TaxiMonthly { get; set; }
-        public string TaxiYearly { get; set; }
-        public string UniformMonthLy { get; set; }
-        public string UniformYearly { get; set; }
-        public string MedicalInsuranceMonthly { get; set; }
-        public string MedicalInsuranceYearly { get; set; }
-        public string AccidentInsuranceMonthly { get; set; }
-        public string AccidentInsuranceYearly { get; set; }
-        public string HealthCheckupMonthly { get; set; }
-        public string HealthCheckupYearly { get; set; }
-        public string SocialInsuranceMonthly { get; set; }
-        public string SocialInsuranceYearly { get; set; }
-        public string TotalMonthly { get; set; }
-        public string TotalYearly { get; set; }
-        public string BasicSalary { get; set; }
-        public string NewSalary { get; set; }
+        public double SalaryMonthly { get; set; }
+        public double SalaryYearly { get; set; }
+        public double BonusJun24Monthly { get; set; }
+        public double BonusJun24Yearly { get; set; }
+        public double BonusDec23Monthly { get; set; }
+        public double BonusDec23Yearly { get; set; }
+        public double PITMonthly { get; set; }
+        public double PITYearly { get; set; }
+        public double LunchMonthly { get; set; }
+        public double LunchYearly { get; set; }
+        public double MobileMonthly { get; set; }
+        public double MobileYearly { get; set; }
+        public double PetroMonthly { get; set; }
+        public double PetroYearly { get; set; }
+        public double TaxiMonthly { get; set; }
+        public double TaxiYearly { get; set; }
+        public double UniformMonthly { get; set; }
+        public double UniformYearly { get; set; }
+        public double MedicalInsuranceMonthly { get; set; }
+        public double MedicalInsuranceYearly { get; set; }
+        public double AccidentInsuranceMonthly { get; set; }
+        public double AccidentInsuranceYearly { get; set; }
+        public double HealthCheckupMonthly { get; set; }
+        public double HealthCheckupYearly { get; set; }
+        public double SocialInsuranceMonthly { get; set; }
+        public double SocialInsuranceYearly { get; set; }
+        public double TotalMonthly { get; set; }
+        public double TotalYearly { get; set; }
+        public double BasicSalary { get; set; }
+        public double NewSalary { get; set; }
     }
 }

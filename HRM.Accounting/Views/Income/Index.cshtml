@@ -45,7 +45,7 @@
     <table id="myTable" class="display">
     </table>
 </div>
-<input type="file" id="import-document" accept=".xlsx" />
+<input type="file" id="import-document" accept=".xlsx" style="display:none" />
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -154,7 +154,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
@@ -162,7 +161,44 @@
 
 @section Scripts{
     <script type="text/javascript">
+        let table = new DataTable('#myTable', {
+            scrollCollapse: true,
+            scrollX: true,
+            scrollY: 300,
+            data: null,
+            columns: [
+                { data: null, title: 'Full Name', width: '130px' },
+                { data: null, title: 'Department', width: '130px' },
+                { data: null, title: 'Position', width: '130px' },
+                { data: null, title: 'DOE', width: '70px' },
+                { data: null, title: 'Depedent', width: '50px' },
+                { data: null, title: 'Leave taken' },
+                { data: null, title: 'KPI' },
+                { data: null, title: 'Email', width: '130px' },
+                { data: null, title: 'Salary (Yearly)', width: '70px' },
+                { data: null, title: 'Bonus (Jul, 2024)', width: '70px' },
+                { data: null, title: 'Bonus (Dec, 2023)', width: '70px' },
+                { data: null, title: 'PIT', width: '100px' },
+                { data: null, title: 'Lunch', width: '100px' },
+                { data: null, title: 'Mobile', width: '100px' },
+                { data: null, title: 'Petro', width: '100px' },
+                { data: null, title: 'Taxi', width: '100px' },
+                { data: null, title: 'Uniform', width: '100px' },
+                { data: null, title: 'Medical Insurance', width: '100px' },
+                { data: null, title: 'Accident Insurance', width: '100px' },
+                { data: null, title: 'Health Checkup', width: '90px' },
+                { data: null, title: 'Social Insurance', width: '100px' },
+                { data: null, title: 'Basic Salary (30 Jun 24)', width: '80px' },
+                { data: null, title: 'Salary (30 Jun 24)', width: '62px' },
+                { data: null, title: 'Total', width: '100px' },
+            ]
+        });
         var ctbl_table;
+
+        if (ctbl_table == null) {
+            $('#btnSend').css('display', 'none');
+        }
+
         $(document).ready(function () {
 
             $('#btnImport').on('click', function () {
@@ -181,6 +217,7 @@
         function importDocument(file) {
             var dataFr = new FormData();
             dataFr.append('file', file);
+
             $.ajax({
                 url: "@Url.Action("Import")",
                 type: "POST",
@@ -190,51 +227,226 @@
                 enctype: "multipart/form-data",
                 success: function (data) {
                     if (data != null) {
+                        table.destroy();
+                        $('#myTable').empty();
+                        $('#btnSend').css('display', 'inline');
                         ctbl_table = $('#myTable').DataTable({
                             scrollCollapse: true,
                             scrollX: true,
                             scrollY: 300,
                             data: data,
+                            select: {
+                                style: 'multi'
+                            },
                             columns: [
-                                { data: 'fullName', title: 'Full Name', width: '20%' },
-                                { data: 'department', title: 'Department' },
-                                { data: 'position', title: 'Position' },
                                 {
-                                    data: null, title: 'DOE',
+                                    data: null, title: 'Full Name', width: '170px',
                                     render: function (data, type) {
-                                        debugger
-                                        data = data.doe + '\n' + data.yoe
-                                        return data;
+                                        return '<strong>' + data.fullName + '</strong>' + '</br>' + data.staffCode
+                                    }
+                                },
+                                { data: 'department', title: 'Department', width: '130px'},
+                                { data: 'position', title: 'Position', width: '170px' },
+                                {
+                                    data: null, title: 'DOE', width: '70px',
+                                    render: function (data, type) {
+                                        return formatDate(data.doe) + '</br>' + data.yoe + ' years';
                                     }
                                 },
                                 {
-                                    data: null, title: 'DOE',
+                                    data: null, title: 'Depedent', width: '50px',
                                     render: function (data, type) {
-                                        debugger
-                                        data = data.doe + '\n' + data.yoe
-                                        return data;
+                                        if (data.depedent > 0) {
+                                            result = data.depedent;
+                                        }
+                                        else {
+                                            result = '-'
+                                        }
+
+                                        return result;
                                     }
                                 },
-                                { data: 'depedent', title: 'Depedent' },
                                 { data: 'leaveTaken', title: 'Leave taken' },
-                                { data: 'kpi', title: 'KPI' },
+                                {
+                                    data: 'kpi', title: 'KPI'
+                                },
                                 { data: 'email', title: 'Email' },
-                                { data: null, title: 'Salary' },
-                                { data: null, title: 'Bonus (Jul, 2024)' },
-                                { data: null, title: 'Bonus (Dec, 2023)' },
-                                { data: null, title: 'PIT' },
-                                { data: null, title: 'Lunch' },
-                                { data: null, title: 'Mobile' },
-                                { data: null, title: 'Petro' },
-                                { data: null, title: 'Taxi' },
-                                { data: null, title: 'Uniform' },
-                                { data: null, title: 'Medical Insurance' },
-                                { data: null, title: 'Accident Insurance' },
-                                { data: null, title: 'Health Checkup' },
-                                { data: null, title: 'Social Insurance' },
-                                { data: null, title: 'Basic Salary (30 Jun 24)' },
-                                { data: null, title: 'Salary (30 Jun 24)' },
-                                { data: null, title: 'Total' },
+                                {
+                                    data: null, title: 'Salary (Yearly)', width: '90px',
+                                    render: function (data, type) {
+                                        if (data.salaryMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.salaryYearly) + '</br>' + formatMoney(data.salaryMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Bonus (Jul, 2024)', width: '70px',
+                                    render: function (data, type) {
+                                        if (data.bonusJun24Monthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.bonusJun24Monthly)
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Bonus (Dec, 2023)', width: '70px',
+                                    render: function (data, type) {
+                                        if (data.bonusDec23Monthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.bonusDec23Monthly)
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'PIT', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.pitMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.pitYearly) + '</br>' + formatMoney(data.pitMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Lunch', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.lunchMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.lunchYearly) + '</br>' + formatMoney(data.lunchMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Mobile', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.mobileMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.mobileYearly) + '</br>' + formatMoney(data.mobileMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Petro', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.petroMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.petroYearly) + '</br>' + formatMoney(data.petroMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Taxi', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.taxiMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.taxiYearly) + '</br>' + formatMoney(data.taxiMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Uniform', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.taxiMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.uniformYearly) + '</br>' + formatMoney(data.uniformMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Medical Insurance', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.medicalInsuranceMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.medicalInsuranceYearly) + '</br>' + formatMoney(data.medicalInsuranceMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Accident Insurance', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.accidentInsuranceMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.accidentInsuranceYearly) + '</br>' + formatMoney(data.accidentInsuranceMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Health Checkup', width: '90px',
+                                    render: function (data, type) {
+                                        if (data.healthCheckupMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.healthCheckupYearly) + '</br>' + formatMoney(data.healthCheckupMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Social Insurance', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.socialInsuranceMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.socialInsuranceYearly) + '</br>' + formatMoney(data.socialInsuranceMonthly) + '/m'
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Basic Salary (30 Jun 24)', width: '80px',
+                                    render: function (data, type) {
+                                        if (data.basicSalary == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.basicSalary)
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Salary (30 Jun 24)', width: '62px',
+                                    render: function (data, type) {
+                                        if (data.newSalary == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.newSalary)
+                                        }
+                                    }
+                                },
+                                {
+                                    data: null, title: 'Total', width: '100px',
+                                    render: function (data, type) {
+                                        if (data.totalMonthly == 0) {
+                                            return '-';
+                                        }
+                                        else {
+                                            return formatMoney(data.totalYearly) + '</br>' + formatMoney(data.totalMonthly) + '/m'
+                                        }
+                                    }
+                                },
                             ]
                         });
                     }
@@ -290,15 +502,15 @@
                 pitSMU: {
                     pitOnSalaryBonus: {
                         name: 'PIT on Salary + Bonus',
-                        monthVND: pITMonthly,
-                        yearVND: pITYearly,
+                        monthVND: data.pitMonthly,
+                        yearVND: data.pitYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     },
                     smu: {
                         name: 'SMU',
-                        monthVND: socialInsuranceMonthly,
-                        yearVND: socialInsuranceYearly,
+                        monthVND: data.socialInsuranceMonthly,
+                        yearVND: data.socialInsuranceYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     },
@@ -313,50 +525,50 @@
                 otherBenefit: {
                     lunchAllowance: {
                         name: 'Lunch Allowance',
-                        monthVND: lunchMonthly,
-                        yearVND: lunchYearly,
+                        monthVND: data.lunchMonthly,
+                        yearVND: data.lunchYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     },
                     telephoneAllowance: {
                         name: 'Telephone Allowance',
-                        monthVND: mobileMonthly,
-                        yearVND: mobileYearly,
+                        monthVND: data.mobileMonthly,
+                        yearVND: data.mobileYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     },
                     petro: {
                         name: 'Petro',
-                        monthVND: petroMonthly,
-                        yearVND: petroYearly,
+                        monthVND: data.petroMonthly,
+                        yearVND: data.petroYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     },
                     taxiCard: {
                         name: 'Taxi card',
-                        monthVND: taxiMonthly,
-                        yearVND: taxiYearly,
+                        monthVND: data.taxiMonthly,
+                        yearVND: data.taxiYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     },
                     accidentInsurence: {
                         name: "Accident Insurance",
-                        monthVND: accidentInsuranceMonthly,
-                        yearVND: accidentInsuranceYearly,
+                        monthVND: data.accidentInsuranceMonthly,
+                        yearVND: data.accidentInsuranceYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     },
                     medicalInsurance: {
                         name: "Medical Insurance",
-                        monthVND: medicalInsuranceMonthly,
-                        yearVND: medicalInsuranceYearly,
+                        monthVND: data.medicalInsuranceMonthly,
+                        yearVND: data.medicalInsuranceYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     },
                     healthCheckUp: {
                         name: "Health CheckUp",
-                        monthVND: healthCheckupMonthly,
-                        yearVND: healthCheckupYearly,
+                        monthVND: data.healthCheckupMonthly,
+                        yearVND: data.healthCheckupYearly,
                         monthUSD: 0,
                         yearUSD: 0
                     }
@@ -379,19 +591,55 @@
                 });
             $('#exampleModal').modal('show');
         })
+
+        function formatDate(dateInput) {
+            if (dateInput != null) {
+                var date = new Date(dateInput).toDateString();
+                date = date.split(' ');
+                return date[2] + ' ' + date[1] + ' ' + date[3];
+            }
+        }
+
+        function formatMoney(moneyInput) {
+            if (moneyInput > 0) {
+                var format = new Intl.NumberFormat('en-US', {
+                    minimumFractionDigits: 0
+                }).format(moneyInput);
+                return format;
+            }
+            else {
+                return '-';
+            }
+        }
     </script>
 }
 
 @section Toolbar{
-    <a id="btnImport" href="#" class="btn btn-sm btn-success mr-1">
+    <a id="btnImport" href="#" class="btn btn-sm btn-primary mr-1">
         <span class="svg-icon svg-icon-sm mr-0">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                    <rect x="0" y="0" width="24" height="24" />
-                    <path d="M8.43296491,7.17429118 L9.40782327,7.85689436 C9.49616631,7.91875282 9.56214077,8.00751728 9.5959027,8.10994332 C9.68235021,8.37220548 9.53982427,8.65489052 9.27756211,8.74133803 L5.89079566,9.85769242 C5.84469033,9.87288977 5.79661753,9.8812917 5.74809064,9.88263369 C5.4720538,9.8902674 5.24209339,9.67268366 5.23445968,9.39664682 L5.13610134,5.83998177 C5.13313425,5.73269078 5.16477113,5.62729274 5.22633424,5.53937151 C5.384723,5.31316892 5.69649589,5.25819495 5.92269848,5.4165837 L6.72910242,5.98123382 C8.16546398,4.72182424 10.0239806,4 12,4 C16.418278,4 20,7.581722 20,12 C20,16.418278 16.418278,20 12,20 C7.581722,20 4,16.418278 4,12 L6,12 C6,15.3137085 8.6862915,18 12,18 C15.3137085,18 18,15.3137085 18,12 C18,8.6862915 15.3137085,6 12,6 C10.6885336,6 9.44767246,6.42282109 8.43296491,7.17429118 Z" fill="#000000" fill-rule="nonzero" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 10V12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V10" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M11.3334 5.33333L8.00008 2L4.66675 5.33333" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M8 2V10" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+
+        </span>
+        <span class="d-none d-sm-inline">Import File</span>
+    </a>
+    <a id="btnSend" href="#" class="btn btn-sm btn-success mr-1">
+        <span class="svg-icon svg-icon-sm mr-0">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_250_496)">
+                    <path d="M14.6668 1.33337L7.3335 8.66671" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M14.6668 1.33337L10.0002 14.6667L7.3335 8.66671L1.3335 6.00004L14.6668 1.33337Z" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
                 </g>
+                <defs>
+                    <clipPath id="clip0_250_496">
+                        <rect width="16" height="16" fill="white" />
+                    </clipPath>
+                </defs>
             </svg>
         </span>
-        <span class="d-none d-sm-inline">Import</span>
+        <span class="d-none d-sm-inline">Send Email</span>
     </a>
 }
